@@ -1,0 +1,107 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup />
+  <ItemGroup>
+    <Compile Update="CustomGUI\Boxes\Password.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="CustomGUI\Curtain\CurtainContent.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="CustomGUI\Curtain\DeveloperInfo.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="CustomGUI\Forms\SubForm.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="CustomGUI\HyperlinkLabel.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="CustomGUI\ImageHolder.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="CustomGUI\Boxes\Password.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="CustomGUI\Curtain\CurtainContent.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="CustomGUI\Curtain\DeveloperInfo.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="CustomGUI\Dialogs\ActionConfirmedDialog.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="CustomGUI\Forms\SubForm.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="CustomGUI\HyperlinkLabel.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="CustomGUI\ImageHolder.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="CustomGUI\Selectors\Combo.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="CustomGUI\Panels\CommandPanel.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="CustomGUI\Boxes\DateBox.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="CustomGUI\Dialogs\DeleteDialog.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="CustomGUI\Dialogs\ErrorDialog.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="CustomGUI\Frame.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="CustomGUI\Selectors\Lista.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="CustomGUI\Forms\LoginForm.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="CustomGUI\MandatoryFlag.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="CustomGUI\PopUpOptions.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="CustomGUI\Dialogs\PrintingPDFDialog.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="CustomGUI\Dialogs\PrintingSettings.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="CustomGUI\Forms\RecordStatusButton.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="CustomGUI\Forms\RecordTracker.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="CustomGUI\ReportViewer.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="CustomGUI\Buttons\RoundButton.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="SARResources.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="CustomGUI\Boxes\SearchBox.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="CustomGUI\Forms\ViewCell.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="CustomGUI\Dialogs\YesNoDialog.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+</Project>

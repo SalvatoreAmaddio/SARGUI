@@ -1,0 +1,34 @@
+﻿<Border x:Class="SARGUI.CustomGUI.DeveloperInfo"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:SARGUI.CustomGUI"
+             x:Name="DeveloperInfoBorder"
+             Style="{StaticResource CurtainBorderStyle}" 
+             VerticalAlignment="Bottom" 
+             Padding="10"
+             mc:Ignorable="d">
+    
+    <StackPanel HorizontalAlignment="Center" x:Name="DeveloperInfoStack">
+        <StackPanel.Resources>
+            <Style TargetType="Label">
+                <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                <Setter Property="FontSize" Value="15"/>
+            </Style>
+        </StackPanel.Resources>
+        <Label Content="Developed By"/>
+        <Label Content="Salvatore Amaddio R."/>
+        <Grid HorizontalAlignment="Center">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="20"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Border>
+                <Image Grid.Column="0" Source="{StaticResource WhatsAppIcon}" HorizontalAlignment="Right"/>
+            </Border>
+            <Label Grid.Column="1" Content="+44 7561 049 295"/>
+        </Grid>
+        <local:HyperlinkLabel/>
+    </StackPanel>
+</Border>
