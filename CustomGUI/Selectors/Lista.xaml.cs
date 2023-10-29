@@ -8,6 +8,7 @@ using System.Text;
 using SARModel;
 using SARGUI.Converters;
 using System.Threading.Tasks;
+using Style = System.Windows.Style;
 
 namespace SARGUI.CustomGUI
 {

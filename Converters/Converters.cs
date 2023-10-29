@@ -6,8 +6,7 @@ using System.Windows.Media;
 using System.Windows.Input;
 using SARGUI.CustomGUI;
 using System.Text;
-using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
+using SARModel;
 
 namespace SARGUI.Converters
 {
@@ -207,11 +206,6 @@ namespace SARGUI.Converters
                 return null;
             }
         }
-    }
-
-    public class DateFormat : IFormatProvider
-    {
-        public object? GetFormat(Type? formatType) => formatType?.ToString();
     }
     #endregion
 
@@ -428,7 +422,7 @@ namespace SARGUI.Converters
             return Text;
         }
 
-        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture) =>
+        public object[]? ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture) =>
         Values;
     }
     #endregion

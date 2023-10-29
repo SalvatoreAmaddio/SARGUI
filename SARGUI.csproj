@@ -48,6 +48,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SARModel\SARModel.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
 	  <Resource Include="img\check.png" />
 	  <Resource Include="img\close.png" />
 	  <Resource Include="img\copy.png" />

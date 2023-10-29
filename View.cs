@@ -17,10 +17,18 @@ using System.Windows.Input;
 using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Frame = System.Windows.Controls.Frame;
 
 namespace SARGUI {
     public static class View 
     {
+        public static IView GetTabView(this TabControl tab) 
+        {
+            TabItem tabItem = (TabItem)tab.SelectedItem;
+            Frame frame = (Frame)tabItem.Content;
+            return (IView)frame.Content;
+        }
+
         #region ImageStorageManager 
         public class ImageStorageManager : AbstractNotifier
         {
@@ -100,7 +108,7 @@ namespace SARGUI {
 
             }
 
-            BitmapImage? GenderateBitMapImg(string? newImgPath) => SARGUI.View.CreateImageSource(newImgPath);
+            static BitmapImage? GenderateBitMapImg(string? newImgPath) => SARGUI.View.CreateImageSource(newImgPath);
 
             public void SetImageSource(string? newImgPath, bool IsDirty = true)
             {
@@ -522,6 +530,74 @@ namespace SARGUI {
         }
         #endregion
 
+        public static class Help 
+        {
+            public static void CSPROYFile()
+            {
+                //<PropertyGroup>
+                //<OutputType>WinExe</OutputType>
+                //<TargetFramework>net7.0-windows</TargetFramework>
+                //<Nullable>enable</Nullable>
+                //<UseWPF>true</UseWPF>
+                //<ApplicationIcon>AppIcon.ico</ApplicationIcon>
+                //<Platforms>AnyCPU; x64; x86</Platforms>
+                //<SelfContained>true</SelfContained>
+                //<RuntimeIdentifier>win-x64</RuntimeIdentifier>
+                //<PublishSingleFile>true</PublishSingleFile>
+                //<Description>Demo</Description>
+                //<IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+                //<EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+                //<ApplicationManifest>app.manifest</ApplicationManifest>
+                //<SignAssembly>True</SignAssembly>
+                //<AssemblyOriginatorKeyFile>sgKey.snk</AssemblyOriginatorKeyFile>
+                //<DelaySign>True</DelaySign>
+                //<Authors>Salvatore Amaddio R.</Authors>
+                //<Copyright>Salvatore Amaddio R.</Copyright>
+                //<Version>1.0.0.0</Version>
+                // </PropertyGroup>
+            }
+
+            /// <summary>
+            /// Set the database's Build Action to 'Embedded resource' and keep CopyToOutput empty.
+            /// <include file='../SARModel/Docs.xml' path='docs/author'/>
+            /// </summary>        
+            public static void Suggestion()
+            {
+                // public App() {
+                //     DatabaseManager.Load();
+                //     try {
+                //         DatabaseManager.AddDatabaseTable(
+                //             new SQLiteTable&lt;Model1>(),
+                //             new SQLiteTable&lt;Model2>(),
+                //             new SQLiteTable&lt;Model3>(),
+                //             ...
+                //             new SQLiteTable&lt;ModelN>()
+                //         );
+                //     }
+                //     catch (Exception ex ) {}
+                // }
+            }
+
+            /// <summary>
+            /// <include file='../SARModel/Docs.xml' path='docs/author'/>
+            /// </summary>
+            public static void AppXAMLSuggestion()
+            {
+                //<ResourceDictionary >
+                //<ResourceDictionary.MergedDictionaries>
+                //<ResourceDictionary Source = "pack://application:,,,/SARGUI;component/SARResources.xaml" />
+                //</ResourceDictionary.MergedDictionaries>
+                //<view:MainWindow x:Key = "MainWindow"/>
+                //
+                //Other stuff if necessary.
+                //</ResourceDictionary>
+                //</Application.Resources>
+            }
+        }
     }
 
+    public interface IView 
+    {
+        IAbstractController Controller { get; }
+    }
 }

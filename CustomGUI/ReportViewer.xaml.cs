@@ -173,6 +173,7 @@ namespace SARGUI.CustomGUI
 
         void PreviousPageClicked(object sender, RoutedEventArgs e)
         {
+            if (SelectedPage == null) throw new("Selected Page is null");
             int index = PagesSource.IndexOf(SelectedPage);
             if (index <= 0) return;
             SelectedPage = PagesSource[index - 1];
@@ -183,6 +184,7 @@ namespace SARGUI.CustomGUI
 
         void NextPageClicked(object sender, RoutedEventArgs e)
         {
+            if (SelectedPage == null) throw new("Selected Page is null");
             int index = PagesSource.IndexOf(SelectedPage);
             if (index >= PagesSource.Count - 1) return;
             SelectedPage = PagesSource[index + 1];
@@ -205,10 +207,10 @@ namespace SARGUI.CustomGUI
 
         void PrinterSelected(object sender, SelectionChangedEventArgs e)
         {
-            string oldValue = string.Empty;
+            string? oldValue = string.Empty;
             if (e.RemovedItems!=null && e.RemovedItems.Count > 0)
             {
-                oldValue = e.RemovedItems[e.RemovedItems.Count - 1].ToString();
+                oldValue = e.RemovedItems[e.RemovedItems.Count - 1]?.ToString();
             }
 
             if (PrinterComboBox.SelectedItem==null)
@@ -222,8 +224,10 @@ namespace SARGUI.CustomGUI
                 });
                 return;
             }
-                
-            SetDefaultPrinter(PrinterComboBox.SelectedItem.ToString());
+
+            string? printerName = PrinterComboBox.SelectedItem?.ToString();
+            if (printerName == null) throw new ("Printer Name cannot be null or empty");
+            SetDefaultPrinter(printerName);
         }
 
         private void SettingButtonClicked(object sender, RoutedEventArgs e)
@@ -314,9 +318,9 @@ namespace SARGUI.CustomGUI
     #region ReportComponents
     public class ReportMainGrid : Grid
     {
-        public ReportHeader Header { get; set; }
-        public ReportBody Body { get; set; }
-        public ReportFooter Footer { get; set; }
+        public ReportHeader Header { get; set; } = null!;
+        public ReportBody Body { get; set; } = null!;
+        public ReportFooter Footer { get; set; } = null!;
 
         #region HeaderHeightProperty
         public static readonly DependencyProperty HeaderHeightProperty
@@ -456,7 +460,7 @@ namespace SARGUI.CustomGUI
             foreach (Map removedchild in RemovedElements)
             {
                 var child = XAMLCloner.Copy<UIElement>(removedchild.Child);
-                MainBody.Children.Add(child);
+                MainBody?.Children.Add(child);
                 int rowindex = GetIndex(MainBody?.RowDefinitions, removedchild);
                 int columnindex = GetIndex(MainBody?.ColumnDefinitions, removedchild, false);
                 Grid.SetRow(child, rowindex);

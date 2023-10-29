@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -13,7 +14,7 @@ using System.Windows.Input;
 namespace SARGUI
 {
     /// <summary>
-    /// Usefull tips to add in the constructor
+    /// Usefull tips to add in the constructor:
     /// <para>
     /// If you have SubControllers decleare a read-only property as follow:
     /// </para>
@@ -63,6 +64,9 @@ namespace SARGUI
         public Type ModelType => typeof(M);
         public string Search { get => _search; set => Set(ref value, ref _search); }
         public bool IsLoading { get => _isLoading; set => Set(ref value, ref _isLoading); }
+
+        protected Task<Excel>? callingExcelTask;
+        protected Task<object?[,]>? organiseExcelDataTask;
         #endregion
 
         #region Commands
@@ -89,13 +93,13 @@ namespace SARGUI
             AfterUpdate += OnAfterUpdate;
         }
 
-        /// <summary>It runs a series of commands after a property gets updated.
-        /// <para>For Example:</para>
-        /// override this method, then add some code inside like the following:
+        /// <summary>It runs a series of commands after a property gets updated.<br/>
+        /// For Example:
+        /// <para>override this method, then add some code inside like the following:</para>
         /// <include file="../SARModel/Docs.xml" path="docs/simpleSearchExample"/>
         /// If you are using an AbstractRecordsOrganizer:
         /// <include file="../SARModel/Docs.xml" path="docs/recordOrganizerSearch"/>
-        /// <include file='../SARModel/Docs.xml' path='docs/recordsOrganizer'/>
+        /// <include file='../SARModel/Docs.xml' path='docs/recordsOrganizer'/><br/>
         /// <include file='../SARModel/Docs.xml' path='docs/author'/>
         /// </summary>
         protected virtual void OnAfterUpdate(object? sender, AbstractPropChangedEventArgs e) { }
@@ -297,6 +301,57 @@ namespace SARGUI
             if (criteria is null || record is null) return false;
             bool? val = record?.ToString()?.ToLower().Contains(criteria);
             return val != null && val.Value;
+        }
+
+        public virtual void RunOffice(OfficeApplication officeApp) => throw new NotImplementedException();
+
+        public static Task<Excel> CallExcel(OfficeFileMode mode, string path)
+        {
+            if (Sys.FileExists(path) && mode.Equals(OfficeFileMode.WRITE))
+            {
+                MessageBoxResult result = MessageBox.Show("This file already exists, do you want to replace it?", "Confirm Action", MessageBoxButton.YesNo);
+                CancellationTokenSource tokenSource = new();
+                CancellationToken token = tokenSource.Token;
+                tokenSource.Cancel();
+                if (result.Equals(MessageBoxResult.No)) return Task.FromCanceled<Excel>(token);
+                Sys.DeleteFile(path);               
+            }
+            return Task.FromResult<Excel>(new(mode, path));
+        }
+
+        public virtual Task<object?[,]> OrganiseExcelData() => throw new NotImplementedException();
+
+        public async Task<bool> WriteExcel(OfficeFileMode mode, string path, Action<Excel>? additionalStyle)
+        {
+            organiseExcelDataTask = OrganiseExcelData();
+            callingExcelTask = CallExcel(mode, path);
+            object?[,] data;
+            Excel excel;
+
+            try
+            {
+                excel = await callingExcelTask;
+                data = await organiseExcelDataTask;
+            }
+            catch
+            {
+                return false;
+            }
+
+            excel.Range.WriteTable(data);
+            additionalStyle?.Invoke(excel);
+            excel.SaveAndClose();
+            return false;
+        }
+
+        public object?[,] GenerateDataTable(params string[] columnValues) 
+        {
+            object?[,] data = new object[ChildSource.RecordCount + 1, columnValues.Length];
+
+            for(int i = 0; i < columnValues.Length; i++) 
+                data[0, i] = columnValues[i];
+            
+            return data;
         }
     }
 
