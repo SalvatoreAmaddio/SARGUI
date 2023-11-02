@@ -5,6 +5,9 @@
     <Compile Update="CustomGUI\Boxes\Password.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="CustomGUI\Buttons\DropDownButton.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="CustomGUI\Curtain\CurtainContent.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -23,6 +26,9 @@
   </ItemGroup>
   <ItemGroup>
     <Page Update="CustomGUI\Boxes\Password.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="CustomGUI\Buttons\DropDownButton.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="CustomGUI\Curtain\CurtainContent.xaml">

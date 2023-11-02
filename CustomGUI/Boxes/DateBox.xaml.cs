@@ -29,7 +29,7 @@ namespace SARGUI.CustomGUI
         {
             base.OnApplyTemplate();
             PART_TextBox = (SearchBox)Template.FindName(nameof(PART_TextBox), this);
-            View.Binder.BindUp(this, nameof(Date), this, DateBox.SelectedDateProperty, BindingMode.TwoWay,null,DateTime.Today);
+            View.Binder.BindUp(this, nameof(Date), this, DateBox.SelectedDateProperty, BindingMode.TwoWay,null,null);
             View.Binder.BindUp(this, nameof(Date), PART_TextBox, SearchBox.TextProperty, BindingMode.TwoWay, new DateToStringConverter(this));
         }
     }

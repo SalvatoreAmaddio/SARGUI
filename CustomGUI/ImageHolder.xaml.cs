@@ -16,9 +16,6 @@ using static SARGUI.View;
 
 namespace SARGUI.CustomGUI
 {
-    /// <summary>
-    /// Interaction logic for ImageHolder.xaml
-    /// </summary>
     public partial class ImageHolder : Border
     {
         public ImageHolder()
@@ -57,7 +54,6 @@ namespace SARGUI.CustomGUI
         }
         #endregion
 
-        void BindUps(object value)=>
-        TitleLabel.Content=value;
+        void BindUps(object value)=> TitleLabel.Content=value;
     }
 }

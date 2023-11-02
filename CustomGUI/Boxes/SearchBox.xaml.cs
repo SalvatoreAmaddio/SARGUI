@@ -139,7 +139,7 @@ namespace SARGUI.CustomGUI
             //if (TemplatedParent is Combo)
             //{
             //    if (!CheckInputInComboBox())
-            //        Dispatcher.BeginInvoke(new Action(() => 
+            //        Dispatcher.BeginInvoke(new Action(() =>
             //        {
             //            MessageBox.Show($"The input '{Text}' is not valid.", "INVALID INPUT");
             //            Undo();
@@ -153,11 +153,12 @@ namespace SARGUI.CustomGUI
              var list = combo.ItemsSource.Cast<object>().ToList();
              if (list==null || list.Count==0) return true;
              bool result = list.Any(s => s.Equals(combo.SelectedItem));
-            if (result)
-                Text = list.First(s => s.Equals(combo.SelectedItem)).ToString();
+            if (result) 
+            {
+            }
             if (combo.SelectedItem == null)
             {
-                Text = string.Empty;
+//                Text = string.Empty;
                 return true;
             }
             return result;

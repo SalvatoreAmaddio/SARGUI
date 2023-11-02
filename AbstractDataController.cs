@@ -3,6 +3,7 @@ using SARModel;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -163,8 +164,14 @@ namespace SARGUI
         }
         public virtual bool Delete(IAbstractModel? record)
         {
-            if (record == null) return false;
-            if (!DeleteActionConfirmed()) return false;
+            switch(false) 
+            { 
+                case false when record == null:
+                case false when (record.IsNewRecord && !record.IsDirty):
+                case false when (!DeleteActionConfirmed()):
+                    return false;
+                default: break;
+            }
             SelectedRecord = null;
             DB.OpenConnection();
             DB.Delete(record);
@@ -303,20 +310,51 @@ namespace SARGUI
             return val != null && val.Value;
         }
 
-        public virtual void RunOffice(OfficeApplication officeApp) => throw new NotImplementedException();
+        public virtual async void RunOffice(OfficeApplication officeApp) 
+        {
+            IsLoading = true;
+            IsLoading = await Task.Run(WriteExcel);
+        }
 
+        public virtual Task<bool> WriteExcel()
+        {
+            return WriteExcel(OfficeFileMode.WRITE, Path.Combine(Sys.DesktopPath, "Example.xlsx"),
+            (excel) =>
+            {
+                excel.Range.Style("D1", new("dd/MM/yyyy", Styles.NumberFormat));
+                excel.Range.Style("E1", new("hh:mm", Styles.NumberFormat));
+                excel.Range.Style("L1:N1", new("£#,##0;[Red]-£#,##0", Styles.NumberFormat));
+                excel.Range.Style("L1:N1", new(11.45, Styles.ColumnWidth));
+                excel.Range.Style("A1", new(14, Styles.ColumnWidth));
+                excel.Range.Style("D1", new(12, Styles.ColumnWidth));
+                excel.Range.Style("F1:H1", new(12, Styles.ColumnWidth));
+                excel.Range.Style("E1", new(10, Styles.ColumnWidth));
+                excel.Range.Style("K1", new(14, Styles.ColumnWidth));
+            });
+        }
         public static Task<Excel> CallExcel(OfficeFileMode mode, string path)
         {
+            CancellationTokenSource tokenSource = new();
+            CancellationToken token = tokenSource.Token;
+
             if (Sys.FileExists(path) && mode.Equals(OfficeFileMode.WRITE))
             {
                 MessageBoxResult result = MessageBox.Show("This file already exists, do you want to replace it?", "Confirm Action", MessageBoxButton.YesNo);
-                CancellationTokenSource tokenSource = new();
-                CancellationToken token = tokenSource.Token;
                 tokenSource.Cancel();
                 if (result.Equals(MessageBoxResult.No)) return Task.FromCanceled<Excel>(token);
-                Sys.DeleteFile(path);               
+                try 
+                {
+                    Sys.DeleteFile(path);
+
+                } catch 
+                {
+                    MessageBox.Show("The file is open and I cannot delete it.\nPlease close it and try again", "I've Failed");
+                    tokenSource.Cancel();
+                    return Task.FromCanceled<Excel>(token);
+                }
             }
-            return Task.FromResult<Excel>(new(mode, path));
+                Excel excel = new(mode, path);
+                return Task.FromResult<Excel>(excel);
         }
 
         public virtual Task<object?[,]> OrganiseExcelData() => throw new NotImplementedException();

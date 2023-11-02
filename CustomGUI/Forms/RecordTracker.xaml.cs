@@ -1,7 +1,9 @@
 ﻿using SARModel;
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Input;
 
 namespace SARGUI.CustomGUI
 {
@@ -18,9 +20,28 @@ namespace SARGUI.CustomGUI
             View.Binder.BindUp(this, nameof(AllowNewRecord), GoNew, Button.VisibilityProperty, BindingMode.TwoWay, new BooleanToVisibilityConverter());
         }
 
+        #region NewRecordCommand
+        public static readonly DependencyProperty NewRecordCommandProperty
+        = View.Binder.Register<ICommand, RecordTracker>(nameof(NewRecordCommand), true, null, NewRecordCommandPropertyChanged, true, true, true);
+
+        private static void NewRecordCommandPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            RecordTracker thisTracker = (RecordTracker)d;
+            ICommand command = (ICommand) e.NewValue;
+            thisTracker.GoNew.Click -= thisTracker.GoNewClicked;
+            thisTracker.GoNew.Command = command;
+        }
+
+        public ICommand NewRecordCommand
+        {
+            private get => (ICommand)GetValue(NewRecordCommandProperty);
+            set => SetValue(NewRecordCommandProperty, value);
+        }
+        #endregion
+
         #region RecordSourceProperty
         public static readonly DependencyProperty RecordSourceProperty
-        = View.Binder.Register<IRecordSource?, RecordTracker>(nameof(RecordSource), true, null, 
+        = View.Binder.Register<IRecordSource?, RecordTracker>(nameof(RecordSource), false, null, 
         (d,e) => View.Binder.BindUp(e.NewValue, "RecordsPositionDisplayer", ((RecordTracker)d).RecordIndicator, Label.ContentProperty, BindingMode.OneWay), true,true,true);
 
         public IRecordSource? RecordSource
@@ -28,7 +49,6 @@ namespace SARGUI.CustomGUI
             private get => (IRecordSource?)GetValue(RecordSourceProperty);
             set => SetValue(RecordSourceProperty, value);
         }
-
         #endregion
 
         #region AllowNewRecord

@@ -167,6 +167,7 @@ namespace SARGUI.CustomGUI
 
             return animation;
         }
+
         private void ToggleButtonClicked(object sender, RoutedEventArgs e) {
             DoubleAnimation heightAnimation = CreateAnimation();
             DoubleAnimation widthAnimation = CreateAnimation();

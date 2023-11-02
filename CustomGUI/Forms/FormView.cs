@@ -3,20 +3,23 @@ using System.Windows;
 using System.Windows.Data;
 using SARModel;
 using SARGUI.Converters;
+using System.Windows.Media.Animation;
+using System;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Menu;
+using System.Windows.Input;
 
 namespace SARGUI.CustomGUI
 {
     public class FormView : Grid
     {
-        protected RecordTracker Tracker=new();
-        protected ProgressBar ProgressBar =new() { IsIndeterminate=true};
-        protected FormContent FormContent =new();
-        protected FormHeader FormHeader =new();
+        protected RecordTracker Tracker = new();
+        protected ProgressBar ProgressBar = new() { IsIndeterminate = true};
+        protected FormContent FormContent = new();
+        protected FormHeader FormHeader = new();
         protected NoWifiStackPanel stack = new();
         protected RecordStatusButton RecordStatusButton = new();
         private readonly ColumnDefinition columnRecordStatusButton = new() { Width = new(20) };
         private readonly ColumnDefinition columnContent = new() { Width = new(1, GridUnitType.Star) };
-        private readonly RowDefinition rowHeader = new() { Height = new(0) };
         private readonly RowDefinition rowContent = new() { Height = new(1, GridUnitType.Star) };
         private readonly RowDefinition rowProgressBar = new () { Height = new(10) };
         private readonly RowDefinition rowTracker = new () { Height = new(30)};
@@ -26,7 +29,7 @@ namespace SARGUI.CustomGUI
             ColumnDefinitions.Add(columnRecordStatusButton);//0
             ColumnDefinitions.Add(columnContent);//1
             
-            RowDefinitions.Add(rowHeader);//0
+            RowDefinitions.Add(new RowDefinition() { Height = new(0,GridUnitType.Auto)});//0
             RowDefinitions.Add(rowContent);//1
             RowDefinitions.Add(rowProgressBar);//2
             RowDefinitions.Add(rowTracker);//3
@@ -50,18 +53,18 @@ namespace SARGUI.CustomGUI
             SetColumn(stack, 1);
             SetRow(stack, 3);
         
-            View.Binder.BindUp(this, nameof(HeaderHeight), rowHeader, RowDefinition.HeightProperty);
             View.Binder.BindUp(this, nameof(ShowRecordStatusButton), columnRecordStatusButton, ColumnDefinition.WidthProperty,BindingMode.TwoWay, new BoolToGridLengthConverter(20));
             View.Binder.BindUp(this, nameof(ShowProgressBar), rowProgressBar, RowDefinition.HeightProperty, BindingMode.TwoWay, new BoolToGridLengthConverter(10));
             View.Binder.BindUp(this, nameof(ShowRecordTracker), rowTracker, RowDefinition.HeightProperty, BindingMode.TwoWay, new BoolToGridLengthConverter(30));
             View.Binder.BindUp(this, nameof(AllowNewRecord), Tracker, RecordTracker.AllowNewRecordProperty);
+            View.Binder.BindUp(this, nameof(NewRecordCommand), Tracker, RecordTracker.NewRecordCommandProperty,BindingMode.OneWay);
             DataContextChanged += FormView_DataContextChanged;
         }
 
         private void FormView_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             View.Binder.BindUp(this, nameof(DataContext), FormContent, FormContent.DataContextProperty);
-            View.Binder.BindUp(this, nameof(DataContext), FormHeader,FormHeader.DataContextProperty);
+            View.Binder.BindUp(this, nameof(DataContext), FormHeader, FormHeader.DataContextProperty);
 
             object? datacontext = FormContent.DataContext;
             if (datacontext is IAbstractController)
@@ -98,11 +101,23 @@ namespace SARGUI.CustomGUI
             if (visualAdded is FormHeader header)
             {
                 FormHeader = header;
+                View.Binder.BindUp(this, nameof(HeaderHeight), FormHeader, FormHeader.HeightProperty);
                 SetRow(FormHeader, 0);
                 SetColumn(FormHeader, 0);
                 SetColumnSpan(FormHeader, 2);
             }
         }
+
+        #region NewRecordCommand
+        public static readonly DependencyProperty NewRecordCommandProperty
+        = View.Binder.Register<ICommand, FormView>(nameof(NewRecordCommand), false, null,null, true, true, true);
+
+        public ICommand NewRecordCommand
+        {
+            private get => (ICommand)GetValue(NewRecordCommandProperty);
+            set => SetValue(NewRecordCommandProperty, value);
+        }
+        #endregion
 
         #region AllowNewRecord
         public static readonly DependencyProperty AllowNewRecordProperty
@@ -117,11 +132,11 @@ namespace SARGUI.CustomGUI
 
         #region HeaderHeight
         public static readonly DependencyProperty HeaderHeightProperty
-        = View.Binder.Register<GridLength, FormView>(nameof(HeaderHeight), true, GridLength.Auto, null,true,true,true);
+        = View.Binder.Register<double, FormView>(nameof(HeaderHeight), true, 60, null, true, true, true);
 
-        public GridLength HeaderHeight
+        public double HeaderHeight
         {
-            get => (GridLength)GetValue(HeaderHeightProperty);
+            get => (double)GetValue(HeaderHeightProperty);
             set => SetValue(HeaderHeightProperty, value);
         }
         #endregion
@@ -179,7 +194,6 @@ namespace SARGUI.CustomGUI
 
     public class FormContent : Border
     {
-
     }
 
     public class FormHeader : Border

@@ -102,6 +102,9 @@
     <clr:String x:Key="Previous">⮜</clr:String>
     <clr:String x:Key="Next">⮞</clr:String>
 
+    <clr:String x:Key="Down">⮟</clr:String>
+    <clr:String x:Key="Up">⮝</clr:String>
+
     <clr:String x:Key="First1">◀◀</clr:String>
     <clr:String x:Key="Last1">▶▶</clr:String>
     <clr:String x:Key="Previous1">◀</clr:String>

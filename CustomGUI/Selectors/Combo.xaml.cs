@@ -5,6 +5,7 @@ using SARGUI.Converters;
 using System.Threading.Tasks;
 using SARModel;
 using System.Linq;
+using System.Collections;
 
 namespace SARGUI.CustomGUI
 {
@@ -35,9 +36,7 @@ namespace SARGUI.CustomGUI
             ItemsSource = RecordsOrganizer?.GetOrganisedSource();
 
             if (RecordsOrganizer?.SelectedItem!=null)
-            {
-                SelectedItem = RecordsOrganizer.SelectedItem;
-            }
+                SelectedItem = RecordsOrganizer?.SelectedItem;
 
             Dispatcher.BeginInvoke(() =>
                 {
@@ -74,6 +73,15 @@ namespace SARGUI.CustomGUI
             if (removedCount>0) RecordsOrganizer.SelectedItem= (IAbstractModel?)e?.RemovedItems[0];            
         }
 
+        protected override void OnItemsSourceChanged(IEnumerable oldValue, IEnumerable newValue)
+        {
+            base.OnItemsSourceChanged(oldValue, newValue);
+            if (newValue is not IRecordSource) return;
+            IRecordSource source = (IRecordSource)newValue;
+            RecordsOrganizer = source.Filter;
+        }
+
+
         #region FilterDataContext
         public static readonly DependencyProperty FilterDataContextProperty= View.Binder.Register<object?, Combo>(nameof(FilterDataContext), true, string.Empty, null, true, true, true);
 
@@ -86,11 +94,11 @@ namespace SARGUI.CustomGUI
 
         #region RecordsOrganizerProperty
         public static readonly DependencyProperty RecordsOrganizerProperty
-        = View.Binder.Register<AbstractRecordsOrganizer?, Combo>(nameof(RecordsOrganizer), true, null, (d,e)=> ((Combo)d).SetRecordsOrganizerRequeryEvent((IRecordsOrganizer)e.NewValue));
+        = View.Binder.Register<IRecordsOrganizer?, Combo>(nameof(RecordsOrganizer), true, null, (d,e)=> ((Combo)d).SetRecordsOrganizerRequeryEvent((IRecordsOrganizer)e.NewValue));
 
-        public AbstractRecordsOrganizer? RecordsOrganizer
+        public IRecordsOrganizer? RecordsOrganizer
         {
-            get => (AbstractRecordsOrganizer?)GetValue(RecordsOrganizerProperty);
+            get => (IRecordsOrganizer?)GetValue(RecordsOrganizerProperty);
             set => SetValue(RecordsOrganizerProperty, value);
         }
 
@@ -99,7 +107,6 @@ namespace SARGUI.CustomGUI
         
         private async void RecordsOrganizerOnRequery(object? sender, RequeryEventArgs e)=>
         await Dispatcher.InvokeAsync(SetOrganisedSourceAsync);
-
         #endregion
 
         #region TextInputManagerProperty

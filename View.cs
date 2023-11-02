@@ -32,51 +32,65 @@ namespace SARGUI {
         #region ImageStorageManager 
         public class ImageStorageManager : AbstractNotifier
         {
+            #region Vars
+            private readonly string appPath;
+            private string imgOriginalPath = string.Empty;
+            private string destinationImagePath = string.Empty;
+            private readonly RemovedImages RemovedImages;
+            #endregion
+
             #region BackProps
-            Visibility _placeholderVisibility = Visibility.Visible;
-            Visibility _buttonVisibility = Visibility.Visible;
-            ImageSource? _imgSrc = null;
-            string FolderName { get; set; } = string.Empty;
-            readonly string appPath;
-            string imgOriginalPath =string.Empty;
-            string destinationImagePath=string.Empty;
-            readonly RemovedImages RemovedImages;
+            private Visibility _placeholderVisibility = Visibility.Visible;
+            private Visibility _buttonVisibility = Visibility.Visible;
+            private ImageSource? _imgSrc;
+            #endregion
+
             #region Funcs
-            Func<bool> CurrentRecordIsNull;
-            Func<string?> CurrentRecordImgPath;
+            private Func<bool> CurrentRecordIsNull;
+            private Func<string?> CurrentRecordImgPath;
             #endregion
 
             #region Actions
-            Action<bool,string?> CurrentRecordBehaviour;
-            Action<object?> CurrentRecordImgPathSetter;
-            #endregion
+            private Action<bool,string?> CurrentRecordBehaviour;
+            private Action<object?> CurrentRecordImgPathSetter;
             #endregion
 
+            #region Props
+            private string FolderName { get; set; } = string.Empty;
             public Visibility PlaceholderVisibility { get => _placeholderVisibility; set => Set(ref value, ref _placeholderVisibility); }
             public Visibility ButtonVisibility { get => _buttonVisibility; set => Set(ref value, ref _buttonVisibility); }
-            public ImageSource? ImgSrc { get => _imgSrc; set => Set(ref value, ref _imgSrc); }    
-            
+            public ImageSource? ImgSrc { get => _imgSrc; set => Set(ref value, ref _imgSrc); }
+            #endregion
+
             #region Commands
             public ICommand PickUpImageCMD { get; }
             public ICommand RemoveImgCMD { get; }
             public ICommand ViewBannerCMD { get; }
             #endregion
 
-            public ImageStorageManager(string folderPath, Action<bool,string?> currentRecordBehaviour, Func<string?> currentRecordImgPath, Func<bool> currentRecordIsNull, Action<object?> currentRecordImgPathSetter)
+            /// <summary>
+            /// The folder containing the images will be next to .exe
+            /// </summary>
+            /// <param name="folderName">Folder to save images in</param>
+            /// <param name="currentRecordBehaviour"></param>
+            /// <param name="currentRecordImgPath"></param>
+            /// <param name="currentRecordIsNull"></param>
+            /// <param name="currentRecordImgPathSetter"></param>
+            public ImageStorageManager(string folderName, Action<bool,string?> currentRecordBehaviour, Func<string?> currentRecordImgPath, Func<bool> currentRecordIsNull, Action<object?> currentRecordImgPathSetter)
             {
-                FolderName = folderPath;
+                FolderName = folderName;
                 RemovedImages = new(FolderName);
                 appPath = Path.GetDirectoryName(Sys.AppLocation) + $@"\{FolderName}\";
-                
+
                 CurrentRecordBehaviour = currentRecordBehaviour;
                 CurrentRecordImgPath = currentRecordImgPath;
                 CurrentRecordIsNull = currentRecordIsNull;
                 CurrentRecordImgPathSetter = currentRecordImgPathSetter;
-                
+
                 PickUpImageCMD = new Command(PickUpImage);
                 RemoveImgCMD = new Command(RemoveImg);
                 ViewBannerCMD = new Command(ViewBanner);
-                AfterUpdate += ImageStorageManager_AfterUpdate;
+                AfterUpdate += OnAfterUpdate;
             }
             
             public void ResetActionsAndFunctions(Action<bool, string?> currentRecordBehaviour, Func<string?> currentRecordImgPath, Func<bool> currentRecordIsNull, Action<object?> currentRecordImgPathSetter)
@@ -87,28 +101,26 @@ namespace SARGUI {
                 CurrentRecordImgPathSetter = currentRecordImgPathSetter;
             }
 
-            private void ImageStorageManager_AfterUpdate(object? sender, AbstractPropChangedEventArgs e)
+            private void OnAfterUpdate(object? sender, AbstractPropChangedEventArgs e)
             {
                 if (e.PropIs(nameof(ImgSrc)))
                 {
                     if (e.GetNewValue() == null && (!CurrentRecordIsNull.Invoke()))
-                    {
                         CurrentRecordImgPathSetter.Invoke(null);
-                    }
+                    
                     PlaceholderVisibility = (ImgSrc == null) ? Visibility.Visible : Visibility.Collapsed;
                     return;
                 }
 
                 if (e.PropIs(nameof(PlaceholderVisibility)))
                 {
-                    Visibility value = (Visibility)e.GetNewValue();
-                    ButtonVisibility = (value.Equals(Visibility.Visible)) ? Visibility.Hidden : Visibility.Visible;
+                    Visibility? value = (Visibility?)e.GetNewValue();
+                    ButtonVisibility = value.Equals(Visibility.Visible) ? Visibility.Hidden : Visibility.Visible;
                     return;
                 }
-
             }
 
-            static BitmapImage? GenderateBitMapImg(string? newImgPath) => SARGUI.View.CreateImageSource(newImgPath);
+            private static BitmapImage? GenderateBitMapImg(string? newImgPath) => CreateImageSource(newImgPath);
 
             public void SetImageSource(string? newImgPath, bool IsDirty = true)
             {
@@ -135,9 +147,10 @@ namespace SARGUI {
                 OpenFileDialog openFileDialog = new()
                 {
                     Title = "Choose a picture",
-                    Filter = "All supported graphics|*.jpg;*.jpeg;*.png|" +
+                    Filter = "All supported graphics|*.jpg;*.jpeg;*.png,*.webp|" +
                                              "JPEG (*.jpg;*.jpeg)|*.jpg;*.jpeg|" +
-                                             "Portable Network Graphic (*.png)|*.png"
+                                             "Portable Network Graphic (*.png)|*.png|" +
+                                             "Google-designed image format (*.webp)|*.webp"
                 };
 
                 if (openFileDialog.ShowDialog() == false) return;
@@ -214,7 +227,7 @@ namespace SARGUI {
                 }
             }
 
-            public void Somethign()
+            public void SetImageOnPlaceholder()
             {
                 PlaceholderVisibility = (ImgSrc == null) ? Visibility.Visible : Visibility.Collapsed;
                 SetImageSource(CurrentRecordImgPath.Invoke(), false);
@@ -304,7 +317,7 @@ namespace SARGUI {
         /// <param name="e"></param>
         public static void ReportStartupExceptions(DispatcherUnhandledExceptionEventArgs e)
         {
-            MessageBox.Show($"{e?.Exception?.Message}\n{e?.Exception?.StackTrace}", "Startup Error");
+            MessageBox.Show($"{e?.Exception?.Message}\n{e?.Exception?.StackTrace}\nINNER: {e?.Exception?.InnerException?.Message}", "Startup Error");
             e.Handled = true;
             Environment.Exit(0);
         }

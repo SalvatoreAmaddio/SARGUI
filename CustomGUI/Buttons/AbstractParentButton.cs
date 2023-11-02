@@ -92,6 +92,10 @@ namespace SARGUI.CustomGUI
     {
         public OpenButton() : base("Open Record", "OpenFolderIcon")
         {
+            SetBinding(Button.CommandProperty, new Binding("DataContext.OpenCMD")
+            {
+                RelativeSource = new RelativeSource(RelativeSourceMode.FindAncestor,typeof(IView), 1)
+            });
         }
     }
 
@@ -99,6 +103,10 @@ namespace SARGUI.CustomGUI
     {
         public DeleteButton() : base("Delete Record", "DeleteIcon")
         {
+            SetBinding(Button.CommandProperty, new Binding("DataContext.DeleteCMD")
+            {
+                RelativeSource = new RelativeSource(RelativeSourceMode.FindAncestor, typeof(IView), 1)
+            });
         }
     }
 
@@ -106,6 +114,11 @@ namespace SARGUI.CustomGUI
     {
         public SaveButton() : base("Save Record","SaveIcon")
         {
+            SetBinding(Button.CommandProperty, new Binding("DataContext.SaveCMD")
+            {
+                RelativeSource = new RelativeSource(RelativeSourceMode.FindAncestor, typeof(IView), 1)
+            });
+
         }
     }
 

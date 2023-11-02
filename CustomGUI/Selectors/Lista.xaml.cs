@@ -9,6 +9,7 @@ using SARModel;
 using SARGUI.Converters;
 using System.Threading.Tasks;
 using Style = System.Windows.Style;
+using System.Collections;
 
 namespace SARGUI.CustomGUI
 {
@@ -261,10 +262,10 @@ namespace SARGUI.CustomGUI
         #endregion
 
         #region RecordsOrganizerProperty
-        public static readonly DependencyProperty RecordsOrganizerProperty = SARGUI.View.Binder.Register<AbstractRecordsOrganizer?, Lista>(nameof(RecordsOrganizer), true, null, (d, e) => ((Lista)d).SetRecordsOrganizerRequeryEvent((IRecordsOrganizer)e.NewValue));
-        public AbstractRecordsOrganizer? RecordsOrganizer
+        public static readonly DependencyProperty RecordsOrganizerProperty = SARGUI.View.Binder.Register<IRecordsOrganizer?, Lista>(nameof(RecordsOrganizer), true, null, (d, e) => ((Lista)d).SetRecordsOrganizerRequeryEvent((IRecordsOrganizer)e.NewValue));
+        public IRecordsOrganizer? RecordsOrganizer
         {
-            get => (AbstractRecordsOrganizer?)GetValue(RecordsOrganizerProperty);
+            get => (IRecordsOrganizer?)GetValue(RecordsOrganizerProperty);
             set => SetValue(RecordsOrganizerProperty, value);
         }
         private void SetRecordsOrganizerRequeryEvent(IRecordsOrganizer recordsOrganizer) => recordsOrganizer.OnRequery += RecordsOrganizerOnRequery;
@@ -283,6 +284,14 @@ namespace SARGUI.CustomGUI
                 return;
             }
             ScrollIntoView(e.AddedItems[0]);
+        }
+
+        protected override void OnItemsSourceChanged(IEnumerable oldValue, IEnumerable newValue)
+        {
+            base.OnItemsSourceChanged(oldValue, newValue);
+            if (newValue is not IRecordSource) return;
+            IRecordSource source = (IRecordSource)newValue;
+            RecordsOrganizer = source.Filter;
         }
 
         void OnListViewItemSelected(object sender, RoutedEventArgs e)=>LastUnselected?.ResetOriginalBackground();

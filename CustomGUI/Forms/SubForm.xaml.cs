@@ -16,23 +16,24 @@ using System.Windows.Shapes;
 
 namespace SARGUI.CustomGUI
 {
-    public partial class SubForm : Grid
+    public partial class SubForm : Grid, IView
     {
+        #region ControllerProperty
+        public static readonly DependencyProperty ControllerProperty
+        = View.Binder.Register<IAbstractController, SubForm>(nameof(Controller), false, null, null, true, true, true);
+
+        public IAbstractController Controller
+        {
+            get => (IAbstractController)GetValue(ControllerProperty);
+            set => SetValue(ControllerProperty, value);
+        }
+        #endregion
+
         public SubForm()
         {
             InitializeComponent();
+            View.Binder.BindUp(this, nameof(Controller), this, DataContextProperty,BindingMode.OneWay);
         }
-
-        #region ParentControllerProperty
-        public static readonly DependencyProperty ParentControllerProperty
-        = View.Binder.Register<IAbstractController, SubForm>(nameof(ParentController), true, null, null, true, true, true);
-
-        public IAbstractController ParentController
-        {
-            get => (IAbstractController)GetValue(ParentControllerProperty);
-            set => SetValue(ParentControllerProperty, value);
-        }
-        #endregion
 
     }
 }
